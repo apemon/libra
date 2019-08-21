@@ -38,6 +38,13 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 		echo "Missing package manager Homebrew (https://brew.sh/). Abort"
 		exit 1
 	fi
+elif [[ "$OSTYPE" == "msys" ]]; then
+	if which choco &>/dev/null; then
+		PACKAGE_MANAGER="choco"
+	else 
+		echo "Missing package manager Chocolatey (https://chocolatey.org/). Abort"
+		exit 1
+	fi
 else
 	echo "Unknown OS. Abort."
 	exit 1
@@ -70,7 +77,9 @@ if rustup --version &>/dev/null; then
 else
 	curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
 	CARGO_ENV="$HOME/.cargo/env"
-	source "$CARGO_ENV"
+	if [[ "$OSTYPE" != "msys" ]]; then
+		source "$CARGO_ENV"
+	fi
 fi
 
 # Run update in order to download and install the checked in toolchain
@@ -97,6 +106,8 @@ else
 		sudo pacman -Syu cmake --noconfirm
 	elif [[ "$PACKAGE_MANAGER" == "brew" ]]; then
 		brew install cmake
+	elif [[ "$PACKAGE_MANAGER" == "choco" ]]; then
+		choco install cmake 
 	fi
 fi
 
@@ -112,6 +123,8 @@ else
 		sudo pacman -Syu go --noconfirm
 	elif [[ "$PACKAGE_MANAGER" == "brew" ]]; then
 		brew install go
+	elif [[ "$PACKAGE_MANAGER" == "choco" ]]; then
+		choco install cmake 
 	fi
 fi
 
@@ -137,6 +150,8 @@ else
 		sudo unzip -o $PROTOC_ZIP -d /usr/local include/*
 		rm -f $PROTOC_ZIP
 		echo "protoc is installed to /usr/local/bin/"
+	elif [[ "$PACKAGE_MANAGER" == "choco" ]]; then
+		choco install protoc 
 	else
 		brew install protobuf
 	fi
