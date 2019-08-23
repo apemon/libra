@@ -124,7 +124,7 @@ else
 	elif [[ "$PACKAGE_MANAGER" == "brew" ]]; then
 		brew install go
 	elif [[ "$PACKAGE_MANAGER" == "choco" ]]; then
-		choco install cmake 
+		choco install golang
 	fi
 fi
 
